@@ -6,11 +6,13 @@ name: Python application
 on:
   push:
     branches: [ "main" ]
+    tags: ['*']
   pull_request:
     branches: [ "main" ]
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   build:
@@ -62,5 +64,36 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_SCHEMA: testdb
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        # list of Docker images to use as base name for tags
+        images: |
+          ghcr.io/astroquirkshq/cosmos-watchdog
+        # generate Docker tags based on the following events/attributes
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=ref,event=tag
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        build-args: COMMIT_HASH=${{ github.sha }}
+        push: true
+
 
 
