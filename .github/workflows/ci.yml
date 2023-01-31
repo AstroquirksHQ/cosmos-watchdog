@@ -1,7 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Python application
+name: Linting & Unit Tests
 
 on:
   push:
@@ -15,10 +12,9 @@ permissions:
   packages: write
 
 jobs:
-  build:
+  linting-and-unit-tests:
 
     runs-on: ubuntu-latest
-    # Service containers to run with `container-job`
     services:
       # Label used to access the service container
       postgres:
@@ -39,61 +35,104 @@ jobs:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.11"
-    - name: Install dependencies
-      run: |
-        python -m pip install pipenv 
-        pipenv install --dev
-    - name: Lint
-      run: |
-        pipenv run lint
-    - name: Test with pytest
-      run: |
-        export 
-        pipenv run test
-      # Environment variables used by the `client.js` script to create a new PostgreSQL table.
-      env:
-        # The hostname used to communicate with the PostgreSQL service container
-        DB_HOST: localhost
-        # The default PostgreSQL port
-        DB_PORT: 5432
-        DB_USER: postgres
-        DB_PASSWORD: postgres
-        DB_SCHEMA: testdb
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v3
-      with:
-        # list of Docker images to use as base name for tags
-        images: |
-          ghcr.io/astroquirkshq/cosmos-watchdog
-        # generate Docker tags based on the following events/attributes
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=ref,event=tag
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and push
-      id: docker_build
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        build-args: COMMIT_HASH=${{ github.sha }}
-        push: true
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install pipenv
+          pipenv install --dev
+      - name: Linting
+        run: |
+          pipenv run lint
+      - name: Unit Tests
+        run: |
+          pipenv run tests
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          DB_HOST: localhost
+          # The default PostgreSQL port
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SCHEMA: testdb
 
+  docker-build-and-publish:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ghcr.io/astroquirkshq/cosmos-watchdog
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: COMMIT_HASH=${{ github.sha }}
+          push: true
 
+  integration-tests:
+    needs: [docker-build-and-publish, linting-and-unit-tests]
 
+    runs-on: ubuntu-latest
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: testdb
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+      cosmos-watchdog:
+        image: ${{ needs.docker-build-and-publish.outputs.image_tag }}
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          DB_HOST: postgres
+          # The default PostgreSQL port
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SCHEMA: testdb
+        ports:
+          # Maps tcp port 5000 on service container to the host
+          - 5000:5000
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install pipenv 
+          pipenv install --dev
+      - name: Run IT tests
+        run: pipenv run it-tests

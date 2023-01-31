@@ -4,7 +4,7 @@ from common.DatabaseConfig import DatabaseConfig
 
 
 class Config:
-    DATABASE = DatabaseConfig(
+    DB = DatabaseConfig(
         SCHEMA=os.environ.get("DB_SCHEMA"),
         USER=os.environ.get("DB_USER"),
         HOST=os.environ.get("DB_HOST"),

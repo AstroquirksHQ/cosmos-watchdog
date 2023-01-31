@@ -6,11 +6,12 @@ name = "pypi"
 [packages]
 flask = "*"
 peewee = "*"
-python-dotenv = "*"
 black = "*"
 flake8 = "*"
 structlog = "*"
 psycopg2-binary = "*"
+requests = "*"
+retry = "*"
 
 [dev-packages]
 pytest = "*"
@@ -19,8 +20,8 @@ pytest = "*"
 python_version = "3.11"
 
 [scripts]
-test = "pytest tests/"
+tests = "pytest tests/unit/"
+it-tests = "pytest tests/integration/"
 lint = "./lint.sh"
 dev = "python run_dev.py"
 prod = "./run_prod.sh"
-
