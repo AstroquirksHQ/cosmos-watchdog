@@ -1,5 +1,5 @@
-from dotenv import load_dotenv
 from flask import Flask
+from retry import retry
 
 from config import Config
 from api.status.controller import StatusController
@@ -14,7 +14,6 @@ MODELS = [Transaction]
 class App(Flask):
     def __init__(self, name):
         super().__init__(name)
-        load_dotenv()
         self.config.from_object(Config)
         self.db = self.init_db()
         self.create_tables()
@@ -24,7 +23,7 @@ class App(Flask):
         self.teardown_request(self.execute_teardown_request)
 
     def init_db(self):
-        db = Database(self.config["DATABASE"])
+        db = Database(self.config["DB"])
         database_proxy.initialize(db.db_instance)
         return db
 
@@ -33,6 +32,7 @@ class App(Flask):
         for blueprint in BLUEPRINTS:
             self.register_blueprint(blueprint)
 
+    @retry(delay=5, tries=5)
     def create_tables(self):
         self.db.db_instance.create_tables(MODELS)
 
