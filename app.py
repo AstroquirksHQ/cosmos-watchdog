@@ -1,6 +1,11 @@
+import os
+
+import structlog
 from flask import Flask
 from retry import retry
 
+from api.synchronization.model import Synchronization
+from cli.cli import synchronize
 from config import Config
 from api.status.controller import StatusController
 from api.transactions.model import Transaction
@@ -8,19 +13,27 @@ from common.BaseModel import database_proxy
 from common.Database import Database
 
 BLUEPRINTS = [StatusController.status_routes]
-MODELS = [Transaction]
+MODELS = [Transaction, Synchronization]
 
 
 class App(Flask):
     def __init__(self, name):
         super().__init__(name)
-        self.config.from_object(Config)
+        self.logger = structlog.get_logger(self.__class__.__name__)
+
+        self.init_config()
+        self.cli.add_command(synchronize)
         self.db = self.init_db()
         self.create_tables()
         self.register_routes()
 
         self.before_request(self.execute_before_request)
         self.teardown_request(self.execute_teardown_request)
+
+    def init_config(self):
+        env = os.environ.get("ENV", "PROD")
+        self.config.from_object(Config(env))
+        self.logger.info("config", **self.config)
 
     def init_db(self):
         db = Database(self.config["DB"])

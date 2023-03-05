@@ -12,6 +12,8 @@ structlog = "*"
 psycopg2-binary = "*"
 requests = "*"
 retry = "*"
+pyyaml = "*"
+click = "*"
 
 [dev-packages]
 pytest = "*"
@@ -25,3 +27,4 @@ it-tests = "pytest tests/integration/"
 lint = "./lint.sh"
 dev = "python run_dev.py"
 prod = "./run_prod.sh"
+synchronize = "flask synchronize"

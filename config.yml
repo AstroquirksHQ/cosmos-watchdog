@@ -1,0 +1,16 @@
+PROD:
+  DB_SCHEMA: cosmos_watchdog
+  DB_USER: cosmos_watchdog
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_PASSWORD: cosmos_watchdog
+  HOST: localhost
+  PORT: 5000
+TEST:
+  DB_SCHEMA: cosmos_watchdog
+  DB_USER: cosmos_watchdog
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_PASSWORD: cosmos_watchdog
+  HOST: localhost
+  PORT: 5000
