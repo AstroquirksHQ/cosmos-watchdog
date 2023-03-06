@@ -1,15 +1,20 @@
-from typing import Callable, List, Dict, Any
+from typing import Optional
 
+from flask import current_app
+from api.transactions.model import TransactionType, Transaction
 
 
 class TransactionService:
-    def __init__(self, validator_address: str):
-        ...
-    #
-    # def compute_delegate_txs(self, address: str) -> Dict[str, Dict[str, Any]]:
-    #     print(f"Fetching all delegate tx for {address}")
-    #     txs = self.fetch_all_txs(address, self.client.get_delegate_txs)
-    #     addresses, total_amount = self.parse_delegate_txs(txs, address)
-    #     print(f"total addresses delegate {len(addresses.keys())}")
-    #     print(f"total delegated {total_amount}")
-    #     return addresses
+    def __init__(self):
+        self.logger = current_app.logger
+
+    def save_many(self, transactions: list[dict]):
+        new_entries = (
+            Transaction.insert_many(transactions).on_conflict_ignore().execute()
+        )
+        self.logger.info(f"Saved {len(new_entries)} new transactions")
+
+    def delete_transactions(self, tx_type: TransactionType, from_offset: Optional[int]):
+        self.logger.warn(f"DELETING {tx_type.value} TRANSACTIONS ...")
+        nb_del = Transaction.delete_by_type_from_offset(tx_type, from_offset)
+        self.logger.warn(f"{nb_del} {tx_type.value} TRANSACTIONS DELETED !")

@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 import requests
+from flask import current_app
 
 from api.cosmos_client.exceptions import EmptyResponseException
 
@@ -15,6 +16,7 @@ class CosmosClient:
 
     def __init__(self, url: str = BASE_URL):
         self.base_url = url
+        self.logger = current_app.logger
 
     def get(self, endpoint: str, params: dict = None) -> Optional[dict]:
         url = f"{self.base_url}{endpoint}"
@@ -56,12 +58,13 @@ class CosmosClient:
     def get_stake_authorization(self, grantee: str, granter: str) -> dict:
         params = {"grantee": grantee, "granter": granter}
         """
-        TODO : Check this transaction : https://www.mintscan.io/osmosis/txs/4F403497F94794C486BDDF4A9BB38E65A76A4251F87AA6B7C6283FBFBD7D494C 
+        TODO : Check this transaction :
+        hash = 4F403497F94794C486BDDF4A9BB38E65A76A4251F87AA6B7C6283FBFBD7D494C
+        https://www.mintscan.io/osmosis/txs/{hash}
 
         Why is it not in the grants ?
         """
-        url = f"/cosmos/authz/v1beta1/grants"
-        return self.get(url, params=params)
+        return self.get("/cosmos/authz/v1beta1/grants", params=params)
 
     def get_block_height(self) -> int:
         """
@@ -70,7 +73,7 @@ class CosmosClient:
         Returns:
             int: The current block height of the blockchain.
         """
-        url = f"/cosmos/base/tendermint/v1beta1/blocks/latest"
+        url = "/cosmos/base/tendermint/v1beta1/blocks/latest"
         resp = self.get(url)
         return int(resp["block"]["header"]["height"])
 
@@ -115,7 +118,7 @@ class CosmosClient:
         return resp
 
     def get_delegate_txs(self, address: str, offset: int = 0) -> Dict:
-        print(f"Fetching delegate txs for {address} - offset {offset}")
+        self.logger.info(f"Fetching delegate txs for {address} - offset {offset}")
         params = {
             "events": [
                 "message.action='/cosmos.staking.v1beta1.MsgDelegate'",
@@ -124,13 +127,13 @@ class CosmosClient:
             "pagination.offset": offset,
         }
         try:
-            resp = self.get(f"/cosmos/tx/v1beta1/txs", params=params)
+            resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
         except EmptyResponseException:
-            return {'tx_responses': [], "pagination": {"total": 0}}
+            return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_redelegate_txs(self, address: str, offset: int = 0):
-        print(f"Fetching redelegate tx to {address} - offset {offset}")
+        self.logger.info(f"Fetching redelegate tx to {address} - offset {offset}")
         params = {
             "events": [
                 "message.action='/cosmos.staking.v1beta1.MsgBeginRedelegate'",
@@ -145,7 +148,7 @@ class CosmosClient:
         return resp
 
     def get_unredelegate_txs(self, address: str, offset: int = 0):
-        print(f"Fetching unredelegate tx from {address} - offset {offset}")
+        self.logger.info(f"Fetching unredelegate tx from {address} - offset {offset}")
         params = {
             "events": [
                 "message.action='/cosmos.staking.v1beta1.MsgBeginRedelegate'",
@@ -159,8 +162,23 @@ class CosmosClient:
             return {}
         return resp
 
+    def get_undelegate_txs(self, address: str, offset: int = 0):
+        self.logger.info(f"Fetching undelegate tx from {address} - offset {offset}")
+        params = {
+            "events": [
+                "message.action='/cosmos.staking.v1beta1.MsgUndelegate'",
+                f"unbond.validator='{address}'",
+            ],
+            "pagination.offset": offset,
+        }
+        try:
+            resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
+        except EmptyResponseException:
+            return {}
+        return resp
+
     def get_restake_txs(self, address: str, offset: int = 0):
-        print(f"Fectching restake tx for {address} - offset {offset}")
+        self.logger.info(f"Fectching restake tx for {address} - offset {offset}")
         params = {
             "events": [
                 "message.action='/cosmos.authz.v1beta1.MsgExec'",

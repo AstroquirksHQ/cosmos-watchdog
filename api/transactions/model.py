@@ -1,6 +1,6 @@
 from enum import Enum
 
-from peewee import CharField, IntegerField, BigIntegerField, Check, DoesNotExist
+from peewee import CharField, IntegerField, BigIntegerField, DoesNotExist
 
 from common.BaseModel import BaseModel
 
@@ -26,18 +26,26 @@ class Transaction(BaseModel):
     offset = IntegerField()
 
     class Meta:
-        indexes = (
-            (('delegator', 'type', 'hash'), True),
-        )
+        indexes = ((("delegator", "type", "hash"), True),)
 
-    @staticmethod
-    def get_last_offset_by_type(type: TransactionType) -> int:
+    @classmethod
+    def get_last_offset_by_type(cls, type: TransactionType) -> int:
         try:
             return (
-                Transaction.select()
-                .where(Transaction.type == type.value)
-                .order_by(Transaction.offset.desc())
-                .get().offset
+                cls.select()
+                .where(cls.type == type.value)
+                .order_by(cls.offset.desc())
+                .get()
+                .offset
             )
         except DoesNotExist:
             return 0
+
+    @classmethod
+    def delete_by_type_from_offset(
+        cls, tx_type: TransactionType, from_offset=None
+    ) -> int:
+        query = cls.delete().where(cls.type == tx_type.value)
+        if from_offset is not None:
+            query = query.where(cls.offset >= from_offset)
+        return query.execute()

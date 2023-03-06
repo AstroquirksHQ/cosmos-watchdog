@@ -9,7 +9,10 @@ class DatabaseConfig:
     PORT: str
     PASSWORD: str
 
-    def to_dict(self):
+    def __repr__(self):
+        return str(self.to_dict())
+
+    def to_dict(self) -> dict:
         return {
             "SCHEMA": self.SCHEMA,
             "HOST": self.HOST,
