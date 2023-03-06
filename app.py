@@ -1,6 +1,10 @@
+import os
+
+import structlog
 from flask import Flask
 from retry import retry
 
+from cli.cli import synchronize, wipe
 from config import Config
 from api.status.controller import StatusController
 from api.transactions.model import Transaction
@@ -14,7 +18,10 @@ MODELS = [Transaction]
 class App(Flask):
     def __init__(self, name):
         super().__init__(name)
-        self.config.from_object(Config)
+        self.logger = structlog.get_logger(__name__)
+
+        self.init_cli()
+        self.init_config()
         self.db = self.init_db()
         self.create_tables()
         self.register_routes()
@@ -22,10 +29,19 @@ class App(Flask):
         self.before_request(self.execute_before_request)
         self.teardown_request(self.execute_teardown_request)
 
+    def init_config(self):
+        env = os.environ.get("ENV", "PROD")
+        self.config.from_object(Config(env))
+        self.logger.info("config", **self.config)
+
     def init_db(self):
         db = Database(self.config["DB"])
         database_proxy.initialize(db.db_instance)
         return db
+
+    def init_cli(self):
+        self.cli.add_command(synchronize)
+        self.cli.add_command(wipe)
 
     def register_routes(self):
         # Routes registration
