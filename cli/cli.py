@@ -3,6 +3,7 @@ from typing import Optional
 import click
 from flask.cli import with_appcontext
 
+from api.notifications.service import NotificationService
 from api.synchronization.service import SynchronizationService
 from api.transactions.model import TransactionType, Transaction
 from api.transactions.service import TransactionService
@@ -18,12 +19,18 @@ from api.transactions.service import TransactionService
     type=click.Choice([t.value.lower() for t in TransactionType]),
     help='Transaction type(s) to synchronize'
 )
+@click.option(
+    '--notify',
+    is_flag=True,
+    type=bool,
+    help='To notify upon new transactions'
+)
 @with_appcontext
-def synchronize(address: str, tx_types: list[str]):
+def synchronize(address: str, tx_types: list[str], notify: bool):
     if not tx_types:
         tx_types = [tx_type.value for tx_type in TransactionType]
     for tx_type in tx_types:
-        SynchronizationService(address).synchronize_by_type(getattr(TransactionType, tx_type.upper()))
+        SynchronizationService(address).synchronize_by_type(getattr(TransactionType, tx_type.upper()), notify)
 
 
 @click.command(name='wipe')
@@ -40,4 +47,18 @@ def wipe(tx_types: list[str], from_offset: Optional[int]):
     if not tx_types:
         tx_types = [tx_type.value for tx_type in TransactionType]
     for tx_type in tx_types:
+
         TransactionService().delete_transactions(getattr(TransactionType, tx_type.upper()), from_offset)
+
+
+@click.command(name='notify')
+@click.option(
+    '--tx-id',
+    '-t',
+    'tx_ids',
+    multiple=True,
+    type=int,
+    help='Transaction id to create a notification for'
+)
+def notify(tx_ids: list[int]):
+    NotificationService().new_notifications(tx_ids)

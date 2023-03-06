@@ -3,6 +3,7 @@ from random import randint
 
 import pytest
 
+from api.notifications.model import Notification
 from api.synchronization.service import SynchronizationService
 from api.transactions.model import TransactionType, Transaction
 from run import app
@@ -22,15 +23,19 @@ def synchronization_service():
 @pytest.fixture(scope="function", autouse=True)
 def db_test():
     with app.db.db_instance.atomic():
+        Notification.drop_table()
         Transaction.drop_table()
         Transaction.create_table()
+        Notification.create_table()
 
     with app.app_context():
         yield
 
     with app.db.db_instance.atomic():
+        Notification.drop_table()
         Transaction.drop_table()
         Transaction.create_table()
+        Notification.create_table()
 
 
 @pytest.fixture(scope="function")

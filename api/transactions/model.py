@@ -14,7 +14,6 @@ class TransactionType(Enum):
 
 
 class Transaction(BaseModel):
-    from_validator = CharField(null=True)
     validator = CharField()
     delegator = CharField()
     type = CharField(choices=[type.value for type in TransactionType])
@@ -24,6 +23,8 @@ class Transaction(BaseModel):
     memo = CharField()
     timestamp = CharField()
     offset = IntegerField()
+    grantee = CharField(null=True)
+    from_validator = CharField(null=True)
 
     class Meta:
         indexes = ((("delegator", "type", "hash"), True),)

@@ -4,7 +4,8 @@ import structlog
 from flask import Flask
 from retry import retry
 
-from cli.cli import synchronize, wipe
+from api.notifications.model import Notification
+from cli.cli import synchronize, wipe, notify
 from config import Config
 from api.status.controller import StatusController
 from api.transactions.model import Transaction
@@ -12,7 +13,7 @@ from common.BaseModel import database_proxy
 from common.Database import Database
 
 BLUEPRINTS = [StatusController.status_routes]
-MODELS = [Transaction]
+MODELS = [Transaction, Notification]
 
 
 class App(Flask):
@@ -42,6 +43,7 @@ class App(Flask):
     def init_cli(self):
         self.cli.add_command(synchronize)
         self.cli.add_command(wipe)
+        self.cli.add_command(notify)
 
     def register_routes(self):
         # Routes registration
