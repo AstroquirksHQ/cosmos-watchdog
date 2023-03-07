@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Iterator, Tuple, Dict
 
-from api.transactions.model import Transaction
-
 
 class TxSynchronizer(ABC):
     @property

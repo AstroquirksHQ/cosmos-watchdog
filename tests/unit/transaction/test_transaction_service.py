@@ -35,32 +35,40 @@ def test_save_many(transaction_service):
     assert len(duplicated_entries) == 0
 
 
-@pytest.mark.parametrize("tx_type, from_offset, expected_deleted", [
-    (TransactionType.DELEGATE, 0, 5),
-    (TransactionType.DELEGATE, 2, 3),
-    (TransactionType.DELEGATE, 238, 0),
-])
-def test_delete_transactions(populate_db, transaction_service, tx_type, from_offset, expected_deleted):
+@pytest.mark.parametrize(
+    "tx_type, from_offset, expected_deleted",
+    [
+        (TransactionType.DELEGATE, 0, 5),
+        (TransactionType.DELEGATE, 2, 3),
+        (TransactionType.DELEGATE, 238, 0),
+    ],
+)
+def test_delete_transactions(
+    populate_db, transaction_service, tx_type, from_offset, expected_deleted
+):
     nb_deleted = transaction_service.delete_transactions(tx_type, from_offset)
     assert nb_deleted == expected_deleted
 
     deleted_tx = Transaction.select().where(
-        Transaction.type == tx_type.value,
-        Transaction.offset >= from_offset
+        Transaction.type == tx_type.value, Transaction.offset >= from_offset
     )
     assert deleted_tx.count() == 0
 
 
-@pytest.mark.parametrize("tx_type, from_offset, expected_deleted", [
-    (TransactionType.DELEGATE, 0, 0),
-    (TransactionType.DELEGATE, 24, 0),
-])
-def test_delete_transactions_empty_db(transaction_service, tx_type, from_offset, expected_deleted):
+@pytest.mark.parametrize(
+    "tx_type, from_offset, expected_deleted",
+    [
+        (TransactionType.DELEGATE, 0, 0),
+        (TransactionType.DELEGATE, 24, 0),
+    ],
+)
+def test_delete_transactions_empty_db(
+    transaction_service, tx_type, from_offset, expected_deleted
+):
     nb_deleted = transaction_service.delete_transactions(tx_type, from_offset)
     assert nb_deleted == expected_deleted
 
     deleted_tx = Transaction.select().where(
-        Transaction.type == tx_type.value,
-        Transaction.offset >= from_offset
+        Transaction.type == tx_type.value, Transaction.offset >= from_offset
     )
     assert deleted_tx.count() == expected_deleted
