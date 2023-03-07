@@ -22,7 +22,7 @@ class TransactionService:
         self.logger.info(f"Saved {len(new_entries)} new transactions!")
         return new_entries
 
-    def delete_transactions(self, tx_type: TransactionType, from_offset: Optional[int]):
+    def delete_transactions(self, tx_type: TransactionType, from_offset: int):
         self.logger.warn(f"DELETING {tx_type.value} TRANSACTIONS ...")
         nb_del = Transaction.delete_by_type_from_offset(tx_type, from_offset)
         self.logger.warn(f"{nb_del} {tx_type.value} TRANSACTIONS DELETED !")
