@@ -10,13 +10,12 @@ class TransactionService:
     def __init__(self):
         self.logger = current_app.logger
 
-    def save_many(self, transactions: list[dict]) -> list[int]:
+    def save_many(self, transactions: list[Transaction]) -> list[int]:
         new_entries = []
         for tx in transactions:
             try:
-                new_entry = Transaction(**tx)
-                new_entry.save()
-                new_entries.append(new_entry.id)
+                tx.save()
+                new_entries.append(tx.id)
             except IntegrityError:
                 self.logger.debug("The transaction already exist")
                 pass

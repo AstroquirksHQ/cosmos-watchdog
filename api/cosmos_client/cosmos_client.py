@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 
 import requests
-from flask import current_app
+import structlog
 
 from api.cosmos_client.exceptions import EmptyResponseException
 
@@ -16,7 +16,7 @@ class CosmosClient:
 
     def __init__(self, url: str = BASE_URL):
         self.base_url = url
-        self.logger = current_app.logger
+        self.logger = structlog.get_logger(__name__)
 
     def get(self, endpoint: str, params: dict = None) -> Optional[dict]:
         url = f"{self.base_url}{endpoint}"
