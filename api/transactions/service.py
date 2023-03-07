@@ -1,6 +1,8 @@
 from typing import Optional
 
 from flask import current_app
+from peewee import IntegrityError
+
 from api.transactions.model import TransactionType, Transaction
 
 
@@ -8,11 +10,18 @@ class TransactionService:
     def __init__(self):
         self.logger = current_app.logger
 
-    def save_many(self, transactions: list[dict]):
-        new_entries = (
-            Transaction.insert_many(transactions).on_conflict_ignore().execute()
-        )
-        self.logger.info(f"Saved {len(new_entries)} new transactions")
+    def save_many(self, transactions: list[dict]) -> list[int]:
+        new_entries = []
+        for tx in transactions:
+            try:
+                new_entry = Transaction(**tx)
+                new_entry.save()
+                new_entries.append(new_entry.id)
+            except IntegrityError:
+                self.logger.debug("The transaction already exist")
+                pass
+        self.logger.info(f"Saved {len(new_entries)} new transactions!")
+        return new_entries
 
     def delete_transactions(self, tx_type: TransactionType, from_offset: Optional[int]):
         self.logger.warn(f"DELETING {tx_type.value} TRANSACTIONS ...")

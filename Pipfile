@@ -22,7 +22,7 @@ pytest = "*"
 python_version = "3.11"
 
 [scripts]
-tests = "pytest tests/unit/"
+tests = "./run_unit_tests.sh"
 it-tests = "pytest tests/integration/"
 lint = "./lint.sh"
 dev = "python run_dev.py"
