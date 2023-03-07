@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Dict
 
 from api.cosmos_client.cosmos_client import CosmosClient
 from api.synchronization.synchronizers.DelegateTxSynchronizer import (
     DelegateTxSynchronizer,
 )
 from api.synchronization.synchronizers.common.TxSynchronizer import TxSynchronizer
-from api.transactions.model import Transaction, TransactionType
+from api.transactions.model import TransactionType
 
 
 class RestakeTxSynchronizer(TxSynchronizer):
@@ -15,7 +15,7 @@ class RestakeTxSynchronizer(TxSynchronizer):
 
     def parse_transaction(
         cls, message: dict, message_props: dict, validator_address: str
-    ) -> List[Transaction]:
+    ) -> List[Dict]:
         transactions = []
         if message["@type"] == cls.message_type:
             message_props["grantee"] = message["grantee"]

@@ -2,7 +2,7 @@ from typing import List, Dict
 
 from api.cosmos_client.cosmos_client import CosmosClient
 from api.synchronization.synchronizers.common.TxSynchronizer import TxSynchronizer
-from api.transactions.model import TransactionType, Transaction
+from api.transactions.model import TransactionType
 
 
 class RedelegateTxSynchronizer(TxSynchronizer):
@@ -13,22 +13,22 @@ class RedelegateTxSynchronizer(TxSynchronizer):
     @classmethod
     def parse_transaction(
         cls, message: Dict, message_props: Dict, validator_address: str
-    ) -> List[Transaction]:
+    ) -> List[Dict]:
         transactions = []
         if message["@type"] == cls.message_type and (
             message["validator_dst_address"] == validator_address
             or message["validator_src_address"] == validator_address
         ):
             transactions.append(
-                Transaction(
+                {
                     **message_props,
-                    from_validator=message["validator_src_address"],
-                    validator=message["validator_dst_address"],
-                    delegator=message["delegator_address"],
-                    amount=int(message["amount"]["amount"]),
-                    type=TransactionType.REDELEGATE.value
+                    "from_validator": message["validator_src_address"],
+                    "validator": message["validator_dst_address"],
+                    "delegator": message["delegator_address"],
+                    "amount": int(message["amount"]["amount"]),
+                    "type": TransactionType.REDELEGATE.value
                     if message["validator_dst_address"] == validator_address
                     else TransactionType.UNREDELEGATE.value,
-                )
+                }
             )
         return transactions

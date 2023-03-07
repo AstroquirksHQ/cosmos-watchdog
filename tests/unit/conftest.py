@@ -6,6 +6,7 @@ import pytest
 from api.notifications.model import Notification
 from api.synchronization.service import SynchronizationService
 from api.transactions.model import TransactionType, Transaction
+from api.transactions.service import TransactionService
 from run import app
 
 
@@ -18,6 +19,11 @@ def client():
 @pytest.fixture
 def synchronization_service():
     return SynchronizationService("validator_address")
+
+
+@pytest.fixture
+def transaction_service():
+    return TransactionService()
 
 
 @pytest.fixture(scope="function", autouse=True)

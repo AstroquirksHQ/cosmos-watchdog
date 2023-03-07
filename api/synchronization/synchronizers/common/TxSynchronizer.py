@@ -24,7 +24,7 @@ class TxSynchronizer(ABC):
     @abstractmethod
     def parse_transaction(
         cls, message: Dict, message_props: Dict, validator_address: str
-    ) -> List[Transaction]:
+    ) -> List[Dict]:
         pass
 
     def fetch_all_txs(
@@ -43,7 +43,7 @@ class TxSynchronizer(ABC):
         node_transactions: List[Dict],
         offset: int,
         validator_address: str,
-    ) -> List[Transaction]:
+    ) -> List[Dict]:
         transactions = []
         for tx in node_transactions:
             message_props = {

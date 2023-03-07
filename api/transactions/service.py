@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, List
 
 from flask import current_app
 from peewee import IntegrityError
@@ -10,10 +10,11 @@ class TransactionService:
     def __init__(self):
         self.logger = current_app.logger
 
-    def save_many(self, transactions: list[Transaction]) -> list[int]:
+    def save_many(self, transactions_datas: List[Dict]) -> List[int]:
         new_entries = []
-        for tx in transactions:
+        for tx_data in transactions_datas:
             try:
+                tx = Transaction(**tx_data)
                 tx.save()
                 new_entries.append(tx.id)
             except IntegrityError:
@@ -22,7 +23,8 @@ class TransactionService:
         self.logger.info(f"Saved {len(new_entries)} new transactions!")
         return new_entries
 
-    def delete_transactions(self, tx_type: TransactionType, from_offset: int):
+    def delete_transactions(self, tx_type: TransactionType, from_offset: int) -> int:
         self.logger.warn(f"DELETING {tx_type.value} TRANSACTIONS ...")
         nb_del = Transaction.delete_by_type_from_offset(tx_type, from_offset)
         self.logger.warn(f"{nb_del} {tx_type.value} TRANSACTIONS DELETED !")
+        return nb_del
