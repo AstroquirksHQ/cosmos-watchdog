@@ -1,8 +1,8 @@
-from run import app
+from src.api.app import app
 
 
 def run():
-    app.run(app.config["HOST"], app.config["PORT"], debug=app.config.get("DEBUG"))
+    app.run()
 
 
 if __name__ == "__main__":
