@@ -8,4 +8,4 @@ RUN  pip install pipenv  \
 ENV HOST=0.0.0.0
 EXPOSE 5000
 
-CMD ["pipenv", "run", "dev"]
+CMD ["pipenv", "run", "server"]

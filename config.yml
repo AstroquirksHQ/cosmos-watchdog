@@ -1,18 +1,32 @@
 PROD:
-  DB_SCHEMA: cosmos_watchdog
-  DB_USER: cosmos_watchdog
-  DB_HOST: localhost
-  DB_PORT: 5432
-  DB_PASSWORD: cosmos_watchdog
-  HOST: localhost
-  PORT: 5000
-  DISCORD_TOKEN: XXX
+  DB:
+    SCHEMA: cosmos_watchdog
+    USER: cosmos_watchdog
+    HOST: localhost
+    PORT: 5432
+    PASSWORD: cosmos_watchdog
+  API:
+    HOST: localhost
+    PORT: 5000
+  BOT:
+    TOKEN: XXX
+    FREQUENCY: 10 #seconds
+    CHANNEL_ID: 1234
+  SYNCHRONIZER:
+    FREQUENCY: 30 #seconds
 TEST:
-  DB_SCHEMA: test_cosmos_watchdog
-  DB_USER: cosmos_watchdog
-  DB_HOST: localhost
-  DB_PORT: 5432
-  DB_PASSWORD: cosmos_watchdog
-  HOST: localhost
-  PORT: 5000
-  DISCORD_TOKEN: XXX
+  DB:
+    SCHEMA: test_cosmos_watchdog
+    USER: cosmos_watchdog
+    HOST: localhost
+    PORT: 5432
+    PASSWORD: cosmos_watchdog
+  API:
+    HOST: 0.0.0.0
+    PORT: 5000
+  BOT:
+    TOKEN: XXX
+    FREQUENCY: 10 #seconds
+    CHANNEL_ID: 1234
+  SYNCHRONIZER:
+    FREQUENCY: 30 #seconds

@@ -48,7 +48,7 @@ The address argument specifies the validator address, and the optional tx-type a
 If no tx-type is specified, all transaction types will be synchronized.
 
 ```
-Usage: flask synchronize [OPTIONS] ADDRESS
+Usage: pipenv run synchronize [OPTIONS] ADDRESS
 
 Options:
   -t, --tx-type [restake|delegate|undelegate|redelegate|unredelegate]
@@ -63,7 +63,7 @@ Options:
 To delete transactions related to a given validator, use the following command:
 
 ```
-Usage: flask wipe [OPTIONS]
+Usage: pipenv run wipe [OPTIONS]
 
 Options:
   -t, --tx-type [restake|delegate|undelegate|redelegate|unredelegate]
@@ -79,7 +79,7 @@ Options:
 To send a notification for a given transaction ID
 
 ```
-Usage: flask notify [OPTIONS]
+Usage: pipenv run notify [OPTIONS]
 
 Options:
   -t, --tx-id INTEGER  Transaction id to create a notification for
@@ -109,9 +109,9 @@ You can configure Cosmos Watchdog using environment variables. Here are the avai
 SYNCHRONIZER_VALIDATOR_ADDRESS: The validator address to synchronize transactions from.
 SYNCHRONIZER_FREQUENCY: The synchronization frequency in seconds.
 DB_SCHEMA, DB_USER, DB_HOST, DB_PORT, and DB_PASSWORD: The database connection parameters.
-DISCORD_BOT_FREQUENCY: The notification frequency in seconds.
-DISCORD_BOT_TOKEN: The auth token of your bot
-DISCORD_BOT_CHANNEL_ID: The ID of the Discord channel
+BOT_FREQUENCY: The notification frequency in seconds.
+BOT_TOKEN: The auth token of your bot
+BOT_CHANNEL_ID: The ID of the Discord channel
 ```
 
 ## Testing

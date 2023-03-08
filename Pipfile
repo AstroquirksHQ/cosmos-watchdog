@@ -14,6 +14,7 @@ requests = "*"
 retry = "*"
 pyyaml = "*"
 click = "*"
+"discord.py" = "*"
 
 [dev-packages]
 pytest = "*"
@@ -22,13 +23,11 @@ pytest = "*"
 python_version = "3.11"
 
 [scripts]
-tests = "./run_unit_tests.sh"
+tests = "./scripts/run_unit_tests.sh"
 it-tests = "pytest tests/integration/"
-lint = "./lint.sh"
-dev = "python run_dev.py"
-prod = "./run_prod.sh"
-synchronize = "flask synchronize"
-wipe = "flask wipe"
-notify = "flask notify"
-bot = "python bot.py"
-
+lint = "./scripts/lint.sh"
+server = "python run_server.py"
+synchronize = "python src/cli/cli.py synchronize"
+wipe = "python src/cli/cli.py wipe"
+notify = "python src/cli/cli.py notify"
+bot = "python src/cli/cli.py bot"
