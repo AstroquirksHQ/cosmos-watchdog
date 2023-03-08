@@ -128,7 +128,8 @@ class CosmosClient:
         }
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
-        except EmptyResponseException:
+        except Exception as e:
+            self.logger.error(e)
             return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
@@ -143,8 +144,9 @@ class CosmosClient:
         }
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
-        except EmptyResponseException:
-            return {}
+        except Exception as e:
+            self.logger.error(e)
+            return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_unredelegate_txs(self, address: str, offset: int = 0):
@@ -158,8 +160,9 @@ class CosmosClient:
         }
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
-        except EmptyResponseException:
-            return {}
+        except Exception as e:
+            self.logger.error(e)
+            return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_undelegate_txs(self, address: str, offset: int = 0):
@@ -173,8 +176,9 @@ class CosmosClient:
         }
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
-        except EmptyResponseException:
-            return {}
+        except Exception as e:
+            self.logger.error(e)
+            return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_restake_txs(self, address: str, offset: int = 0):
@@ -186,5 +190,9 @@ class CosmosClient:
             ],
             "pagination.offset": offset,
         }
-        resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
+        try:
+            resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
+        except Exception as e:
+            self.logger.error(e)
+            return {"tx_responses": [], "pagination": {"total": 0}}
         return resp

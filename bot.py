@@ -18,18 +18,20 @@ class MyClient(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = structlog.get_logger(__name__)
-        self.init_config()
-        self.init_db()
+        self.config = self.init_config()
+        self.db = self.init_db()
         self.notification_service = NotificationService()
 
-    def init_db(self):
-        self.db = Database(self.config.DB)
-        database_proxy.initialize(self.db.db_instance)
+    def init_db(self) -> Database:
+        db = Database(self.config.DB)
+        database_proxy.initialize(db.db_instance)
+        return db
 
-    def init_config(self):
+    def init_config(self) -> Config:
         env = os.environ.get("ENV", "PROD")
-        self.config = Config(env)
+        config = Config(env)
         self.logger.info("config", config=self.config)
+        return config
 
     async def setup_hook(self) -> None:
         # start the task to run in the background
@@ -39,13 +41,15 @@ class MyClient(discord.Client):
         self.logger.info(f"Logged in as {self.user} (ID: {self.user.id})")
         self.logger.info("------")
 
-    @tasks.loop(seconds=3)  # task runs every 60 seconds
+    @tasks.loop(seconds=3)  # task runs every 3 seconds
     async def my_background_task(self):
         channel = self.get_channel(CHANNEL_ID)  # channel ID goes here
         notifications = self.notification_service.get_pending_notifications()
         for notification in notifications:
-            await channel.send(embed=MessageCrafter(notification).to_card())
-            self.notification_service.mark_as_sent(notification)
+            card = MessageCrafter(notification).to_card()
+            if card:
+                await channel.send(embed=card)
+                self.notification_service.mark_as_sent(notification)
 
     @my_background_task.before_loop
     async def before_my_task(self):

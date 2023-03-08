@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List
 from unittest.mock import Mock, call
 
@@ -131,7 +132,7 @@ def test_extract_transactions():
                 "height": 1,
                 "hash": "hash1",
                 "memo": "memo1",
-                "timestamp": "2022-03-07T10:00:00Z",
+                "timestamp": datetime.strptime("2022-03-07T10:00:00Z", '%Y-%m-%dT%H:%M:%SZ'),
                 "offset": 0,
             },
             "validator_address": validator_address,
@@ -142,7 +143,7 @@ def test_extract_transactions():
                 "height": 2,
                 "hash": "hash2",
                 "memo": "memo2",
-                "timestamp": "2022-03-07T11:00:00Z",
+                "timestamp": datetime.strptime("2022-03-07T11:00:00Z", '%Y-%m-%dT%H:%M:%SZ'),
                 "offset": 1,
             },
             "validator_address": validator_address,

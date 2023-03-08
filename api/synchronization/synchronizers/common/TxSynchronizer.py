@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import List, Iterator, Tuple, Dict
 
 
@@ -48,7 +49,7 @@ class TxSynchronizer(ABC):
                 "height": tx["height"],
                 "hash": tx["txhash"],
                 "memo": tx["tx"]["body"]["memo"],
-                "timestamp": tx["timestamp"],
+                "timestamp": datetime.strptime(tx["timestamp"], '%Y-%m-%dT%H:%M:%SZ'),
                 "offset": int(offset),
             }
             for message in tx["tx"]["body"]["messages"]:

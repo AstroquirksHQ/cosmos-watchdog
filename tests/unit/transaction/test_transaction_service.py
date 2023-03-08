@@ -1,3 +1,4 @@
+from datetime import datetime
 from random import randint
 
 import pytest
@@ -19,7 +20,7 @@ def test_save_many(transaction_service):
                     "height": randint(1, 100),
                     "amount": randint(1, 100),
                     "memo": f"Memo{i}",
-                    "timestamp": "%Y-%m-%d %H:%M:%S",
+                    "timestamp": datetime.now(),
                     "offset": i,
                 }
             )
