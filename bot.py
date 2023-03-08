@@ -7,14 +7,13 @@ from config import Config
 import os
 from discord.ext import tasks
 
-import discord
+from discord import Client, Intents
 from discord.MessageCrafter import MessageCrafter
 
-TOKEN = "xxxx"
 CHANNEL_ID = 1082130614939025439
 
 
-class MyClient(discord.Client):
+class DiscordBot(Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = structlog.get_logger(__name__)
@@ -30,8 +29,11 @@ class MyClient(discord.Client):
     def init_config(self) -> Config:
         env = os.environ.get("ENV", "PROD")
         config = Config(env)
-        self.logger.info("config", config=self.config)
+        self.logger.info("config", config=config)
         return config
+
+    def run(self) -> None:
+        return super().run(self.config.DISCORD_TOKEN)
 
     async def setup_hook(self) -> None:
         # start the task to run in the background
@@ -56,5 +58,5 @@ class MyClient(discord.Client):
         await self.wait_until_ready()  # wait until the bot logs in
 
 
-client = MyClient(intents=discord.Intents.default())
-client.run(TOKEN)
+client = DiscordBot(intents=Intents.default())
+client.run()

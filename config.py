@@ -17,6 +17,7 @@ class Config:
         )
         self.HOST = self.lookup_config("HOST")
         self.PORT = self.lookup_config("PORT")
+        self.DISCORD_TOKEN = self.lookup_config("DISCORD_TOKEN")
 
     @staticmethod
     def load_config_file(file: str):

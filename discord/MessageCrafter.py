@@ -102,9 +102,9 @@ class MessageCrafter:
                              )
         card.add_field(name='👨‍🚀 Delegator', value=self.address_url(tx.delegator), inline=True)
         card.add_field(name='💰 Amount', value=self.amount(tx.amount), inline=True)
-        card.add_field(name='👷 By', value=self.address_url(tx.grantee), inline=False)
         if tx.memo:
             card.add_field(name='📝 Memo', value=tx.memo, inline=False)
+        card.add_field(name='👷 By', value=self.address_url(tx.grantee), inline=False)
         card.add_field(name='#️⃣ Hash', value=self.tx_hash_url(tx.hash), inline=False)
         card.set_thumbnail(url="https://i.imgur.com/hHY9HID.png")
         return card
