@@ -42,8 +42,8 @@ def synchronize(address: str, tx_types: list[str], notify: bool):
     type=click.Choice([t.value.lower() for t in TransactionType]),
     help='Transaction type(s) to wipe'
 )
-@click.option('--from-offset', type=int, help='Wipe all transactions from offset')
-def wipe(tx_types: list[str], from_offset: Optional[int]):
+@click.option('--from-offset', type=int, default=0, help='Wipe all transactions from offset')
+def wipe(tx_types: list[str], from_offset: int):
     if not tx_types:
         tx_types = [tx_type.value for tx_type in TransactionType]
     for tx_type in tx_types:
@@ -61,4 +61,4 @@ def wipe(tx_types: list[str], from_offset: Optional[int]):
     help='Transaction id to create a notification for'
 )
 def notify(tx_ids: list[int]):
-    NotificationService().new_notifications(tx_ids)
+    NotificationService().new_notifications_for_tx_ids(tx_ids)

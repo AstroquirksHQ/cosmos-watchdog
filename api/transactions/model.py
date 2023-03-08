@@ -43,10 +43,13 @@ class Transaction(BaseModel):
             return 0
 
     @classmethod
-    def delete_by_type_from_offset(
-        cls, tx_type: TransactionType, from_offset=None
-    ) -> int:
-        query = cls.delete().where(cls.type == tx_type.value)
-        if from_offset is not None:
-            query = query.where(cls.offset >= from_offset)
+    def delete_by_type_from_offset(cls, tx_type: TransactionType, from_offset) -> int:
+        query = (
+            cls.delete()
+            .where(cls.type == tx_type.value)
+            .where(cls.offset >= from_offset)
+        )
         return query.execute()
+
+    def serialize(self):
+        return {"delegator": self.delegator, "type": self.type, "hash": self.hash}
