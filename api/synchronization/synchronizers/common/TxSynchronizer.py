@@ -49,7 +49,7 @@ class TxSynchronizer(ABC):
                 "height": tx["height"],
                 "hash": tx["txhash"],
                 "memo": tx["tx"]["body"]["memo"],
-                "timestamp": datetime.strptime(tx["timestamp"], '%Y-%m-%dT%H:%M:%SZ'),
+                "timestamp": datetime.strptime(tx["timestamp"], "%Y-%m-%dT%H:%M:%SZ"),
                 "offset": int(offset),
             }
             for message in tx["tx"]["body"]["messages"]:
