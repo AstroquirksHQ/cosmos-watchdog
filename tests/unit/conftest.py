@@ -4,6 +4,7 @@ from random import randint
 import pytest
 
 from api.notifications.model import Notification
+from api.notifications.service import NotificationService
 from api.synchronization.service import SynchronizationService
 from api.transactions.model import TransactionType, Transaction
 from api.transactions.service import TransactionService
@@ -24,6 +25,11 @@ def synchronization_service():
 @pytest.fixture
 def transaction_service():
     return TransactionService()
+
+
+@pytest.fixture
+def notification_service():
+    return NotificationService()
 
 
 @pytest.fixture(scope="function", autouse=True)

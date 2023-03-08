@@ -68,7 +68,9 @@ class SynchronizationService:
             if transactions:
                 new_transactions = self.transaction_service.save_many(transactions)
                 if notify:
-                    self.notification_service.new_notifications(new_transactions)
+                    self.notification_service.new_notifications_for_tx_ids(
+                        new_transactions
+                    )
 
     def synchronize_by_type(self, tx_type: TransactionType, notify: bool):
         synchronizer = TRANSACTION_SYNCHRONIZERS.get(tx_type)

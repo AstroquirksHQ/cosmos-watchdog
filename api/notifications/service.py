@@ -1,4 +1,5 @@
 import structlog
+from peewee import IntegrityError
 
 from api.notifications.model import Notification
 
@@ -16,16 +17,17 @@ class NotificationService:
         notification.to_sent()
         self.logger.info(f"Notification for tx ({notification.transaction}) sent !")
 
-    def new_notifications(self, new_transactions_ids: list[int]):
-        new_entries = (
-            Notification.insert_many(
-                [{"transaction_id": tx_id} for tx_id in new_transactions_ids]
-            )
-            .returning(Notification.id)
-            .on_conflict_ignore()
-            .execute()
-        )
-        self.logger.info(
-            f"Saved {len(new_entries) if new_entries else 0} new notifications !"
-        )
+    def new_notifications_for_tx_ids(self, transactions_ids: list[int]):
+        new_entries = []
+        for id in transactions_ids:
+            try:
+                notif = Notification(transaction=id)
+                notif.save()
+                new_entries.append(notif.id)
+            except IntegrityError:
+                self.logger.debug(
+                    f"The Notification already exist for transaction ({id})"
+                )
+                pass
+        self.logger.info(f"Saved {len(new_entries)} new notifications !")
         return new_entries

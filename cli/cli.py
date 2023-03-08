@@ -61,4 +61,4 @@ def wipe(tx_types: list[str], from_offset: int):
     help='Transaction id to create a notification for'
 )
 def notify(tx_ids: list[int]):
-    NotificationService().new_notifications(tx_ids)
+    NotificationService().new_notifications_for_tx_ids(tx_ids)

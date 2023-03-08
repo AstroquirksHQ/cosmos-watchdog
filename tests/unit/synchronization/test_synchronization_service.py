@@ -31,7 +31,9 @@ def test_synchronize(synchronization_service, notify):
     synchronization_service.transaction_service.save_many = MagicMock(
         return_value=[Mock(), Mock()]
     )
-    synchronization_service.notification_service.new_notifications = MagicMock()
+    synchronization_service.notification_service.new_notifications_for_tx_ids = (
+        MagicMock()
+    )
     synchronization_service.get_page_offset = MagicMock(return_value=10)
     mocked_synchronizer = MagicMock()
 
@@ -61,6 +63,6 @@ def test_synchronize(synchronization_service, notify):
     )
     synchronization_service.transaction_service.save_many.assert_called_once()
     assert (
-        synchronization_service.notification_service.new_notifications.call_count
+        synchronization_service.notification_service.new_notifications_for_tx_ids.call_count
         == int(notify)
     )
