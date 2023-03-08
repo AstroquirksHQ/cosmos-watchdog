@@ -7,29 +7,33 @@ from config import Config
 import os
 from discord.ext import tasks
 
-import discord
+from discord import Client, Intents
 from discord.MessageCrafter import MessageCrafter
 
-TOKEN = "xxxx"
 CHANNEL_ID = 1082130614939025439
 
 
-class MyClient(discord.Client):
+class DiscordBot(Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = structlog.get_logger(__name__)
-        self.init_config()
-        self.init_db()
+        self.config = self.init_config()
+        self.db = self.init_db()
         self.notification_service = NotificationService()
 
-    def init_db(self):
-        self.db = Database(self.config.DB)
-        database_proxy.initialize(self.db.db_instance)
+    def init_db(self) -> Database:
+        db = Database(self.config.DB)
+        database_proxy.initialize(db.db_instance)
+        return db
 
-    def init_config(self):
+    def init_config(self) -> Config:
         env = os.environ.get("ENV", "PROD")
-        self.config = Config(env)
-        self.logger.info("config", config=self.config)
+        config = Config(env)
+        self.logger.info("config", config=config)
+        return config
+
+    def run(self) -> None:
+        return super().run(self.config.DISCORD_TOKEN)
 
     async def setup_hook(self) -> None:
         # start the task to run in the background
@@ -39,18 +43,20 @@ class MyClient(discord.Client):
         self.logger.info(f"Logged in as {self.user} (ID: {self.user.id})")
         self.logger.info("------")
 
-    @tasks.loop(seconds=3)  # task runs every 60 seconds
+    @tasks.loop(seconds=3)  # task runs every 3 seconds
     async def my_background_task(self):
         channel = self.get_channel(CHANNEL_ID)  # channel ID goes here
         notifications = self.notification_service.get_pending_notifications()
         for notification in notifications:
-            await channel.send(embed=MessageCrafter(notification).to_card())
-            self.notification_service.mark_as_sent(notification)
+            card = MessageCrafter(notification).to_card()
+            if card:
+                await channel.send(embed=card)
+                self.notification_service.mark_as_sent(notification)
 
     @my_background_task.before_loop
     async def before_my_task(self):
         await self.wait_until_ready()  # wait until the bot logs in
 
 
-client = MyClient(intents=discord.Intents.default())
-client.run(TOKEN)
+client = DiscordBot(intents=Intents.default())
+client.run()

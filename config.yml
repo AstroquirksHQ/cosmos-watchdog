@@ -6,6 +6,7 @@ PROD:
   DB_PASSWORD: cosmos_watchdog
   HOST: localhost
   PORT: 5000
+  DISCORD_TOKEN: XXX
 TEST:
   DB_SCHEMA: test_cosmos_watchdog
   DB_USER: cosmos_watchdog
@@ -14,3 +15,4 @@ TEST:
   DB_PASSWORD: cosmos_watchdog
   HOST: localhost
   PORT: 5000
+  DISCORD_TOKEN: XXX

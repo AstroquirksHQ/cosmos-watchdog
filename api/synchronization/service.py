@@ -55,10 +55,7 @@ class SynchronizationService:
         transactions_batches = synchronizer.fetch_all_txs(
             self.validator_address, page_offset
         )
-        print("coucou")
-        print(transactions_batches)
         for transactions_batch, offset in transactions_batches:
-            print("hey")
             transactions = synchronizer.extract_transactions(
                 transactions_batch, offset, self.validator_address
             )

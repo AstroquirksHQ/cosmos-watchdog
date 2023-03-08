@@ -1,6 +1,6 @@
 from enum import Enum
 
-from peewee import CharField, IntegerField, BigIntegerField, DoesNotExist
+from peewee import CharField, IntegerField, BigIntegerField, DoesNotExist, DateTimeField
 
 from common.BaseModel import BaseModel
 
@@ -21,7 +21,7 @@ class Transaction(BaseModel):
     height = IntegerField()
     amount = BigIntegerField()
     memo = CharField()
-    timestamp = CharField()
+    timestamp = DateTimeField()
     offset = IntegerField()
     grantee = CharField(null=True)
     from_validator = CharField(null=True)

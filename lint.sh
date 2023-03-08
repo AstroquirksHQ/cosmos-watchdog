@@ -4,7 +4,7 @@ set -e
 
 
 
-inputs=(*.py tests/* common/* api/*)
+inputs=(*.py tests/* common/* api/* cli/* discord/*)
 
 for input in "${inputs[@]}"; do
   # run black

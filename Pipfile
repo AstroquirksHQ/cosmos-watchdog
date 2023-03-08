@@ -28,3 +28,7 @@ lint = "./lint.sh"
 dev = "python run_dev.py"
 prod = "./run_prod.sh"
 synchronize = "flask synchronize"
+wipe = "flask wipe"
+notify = "flask notify"
+bot = "python bot.py"
+

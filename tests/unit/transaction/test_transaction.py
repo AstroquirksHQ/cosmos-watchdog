@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from peewee import IntegrityError
 
@@ -40,7 +42,7 @@ def test_unique_constraints():
         "height": 1,
         "amount": 100,
         "memo": "memo1",
-        "timestamp": "2022-03-05T12:00:00Z",
+        "timestamp": datetime.now(),
         "offset": 1,
     }
 

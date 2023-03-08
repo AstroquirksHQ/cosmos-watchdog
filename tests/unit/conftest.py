@@ -64,6 +64,6 @@ def populate_db():
                 height=randint(1, 100),
                 amount=randint(1, 100),
                 memo=f"Memo{i}",
-                timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                timestamp=datetime.now(),
                 offset=i,
             )
