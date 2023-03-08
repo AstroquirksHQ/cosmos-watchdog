@@ -121,6 +121,7 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_SCHEMA: testdb
+          API_HOST: 0.0.0.0
         ports:
           # Maps tcp port 5000 on service container to the host
           - 5000:5000
