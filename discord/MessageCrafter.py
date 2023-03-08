@@ -28,7 +28,7 @@ class MessageCrafter:
         return f"[{hash}](https://www.mintscan.io/osmosis/txs/{hash})"
 
     def title(self, tx: Transaction):
-        return TransactionType.RESTAKE.value if tx.grantee else tx.type.value
+        return TransactionType.RESTAKE.value if tx.grantee else tx.type
 
     def address_url(self, address: str) -> str:
         return f"[{address}](https://www.mintscan.io/osmosis/account/{address})"
