@@ -8,6 +8,9 @@ class BotConfig:
     FREQUENCY: int
     CHANNEL_ID: int
 
+    def __repr__(self):
+        return str(self.to_dict())
+
     def to_dict(self) -> Dict:
         return {
             "TOKEN": "***",

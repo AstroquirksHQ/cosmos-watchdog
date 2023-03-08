@@ -5,9 +5,9 @@ from discord import Client, Intents
 from discord.ext import tasks
 import structlog
 
+from src.bot.config.service import BotConfigService
 from src.bot.message_crafter import MessageCrafter
-from src.core.common.config import Config
-from src.core.common.context import database_context
+from src.core.common.database.context import database_context
 from src.core.notifications.service import NotificationService
 
 
@@ -23,7 +23,7 @@ class DiscordBot(Client):
 
     def init_config(self):
         env = os.environ.get("ENV", "PROD")
-        config = Config(env, config_key="BOT", file="config.yml").get_bot_config()
+        config = BotConfigService(env, file="config.yml").get_config()
         self.logger.info("config", **config.to_dict())
         return config
 

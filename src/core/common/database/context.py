@@ -2,8 +2,8 @@ import os
 
 import structlog
 
-from src.core.common.config import Config
 from src.core.common.database.base_model import database_proxy
+from src.core.common.database.config.service import DatabaseConfigService
 from src.core.common.database.service import DatabaseService
 
 
@@ -23,7 +23,7 @@ def database_context(cls):
                 logger.info("Environment", env=env)
 
                 # getting config
-                db_config = Config(env, "DB", "config.yml").get_database_config()
+                db_config = DatabaseConfigService(env, "config.yml").get_config()
                 logger.info("Database config", config=db_config)
 
                 # initializing db

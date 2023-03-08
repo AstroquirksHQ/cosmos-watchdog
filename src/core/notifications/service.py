@@ -1,7 +1,7 @@
 import structlog
 from peewee import IntegrityError
 
-from src.core.common.context import database_context
+from src.core.common.database.context import database_context
 from src.core.notifications.model import Notification
 
 

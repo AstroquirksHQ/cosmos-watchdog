@@ -4,8 +4,8 @@ from random import randint
 
 import pytest
 
-from src.core.common.config import Config
 from src.core.common.database.base_model import database_proxy
+from src.core.common.database.config.service import DatabaseConfigService
 from src.core.common.database.service import DatabaseService
 from src.core.notifications.model import Notification
 from src.core.transactions.model import Transaction, TransactionType
@@ -14,7 +14,7 @@ from src.core.transactions.model import Transaction, TransactionType
 @pytest.fixture(scope="function", autouse=True)
 def db_test():
     env = os.environ.get("ENV", "TEST")
-    config = Config(env, "DB").get_database_config()
+    config = DatabaseConfigService(env, file="config.yml").get_config()
     db = DatabaseService(config)
     database_proxy.initialize(db.database)
     with database_proxy.atomic():

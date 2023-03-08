@@ -1,7 +1,7 @@
 import structlog
 from peewee import PostgresqlDatabase
 
-from src.core.common.database.config import DatabaseConfig
+from src.core.common.database.config.model import DatabaseConfig
 
 
 class DatabaseService:

@@ -5,11 +5,11 @@ from flask import Flask
 from retry import retry
 
 from src.core.notifications.model import Notification
-from src.core.common.config import Config
 from src.core.transactions.model import Transaction
 from src.core.common.database.base_model import database_proxy
+from .config.service import APIConfigService
 from .status.controller import StatusController
-from ..core.common.context import database_context
+from src.core.common.database.context import database_context
 
 BLUEPRINTS = [StatusController.status_routes]
 MODELS = [Transaction, Notification]
@@ -33,9 +33,7 @@ class App(Flask):
 
     def init_config(self):
         env = os.environ.get("ENV", "PROD")
-        self.config.from_object(
-            Config(env, config_key="API", file="config.yml").get_api_config()
-        )
+        self.config.from_object(APIConfigService(env, file="config.yml").get_config())
         self.logger.info("config", **self.config)
 
     def register_routes(self):

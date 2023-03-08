@@ -2,7 +2,7 @@ from typing import Dict, Type
 
 import structlog
 
-from src.core.common.context import database_context
+from src.core.common.database.context import database_context
 from src.core.notifications.service import NotificationService
 from src.core.transactions.model import TransactionType, Transaction
 from src.core.transactions.service import TransactionService
