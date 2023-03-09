@@ -30,3 +30,4 @@ TEST:
     CHANNEL_ID: 1234
   SYNCHRONIZER:
     FREQUENCY: 30 #seconds
+    VALIDATOR_ADDRESS: osmovaloper1udp8gef365zcqhlxuepewrxuep9thjanuhxcaw

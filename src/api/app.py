@@ -7,6 +7,7 @@ from retry import retry
 from src.core.notifications.model import Notification
 from src.core.transactions.model import Transaction
 from src.core.common.database.base_model import database_proxy
+from .config.model import APIConfig
 from .config.service import APIConfigService
 from .status.controller import StatusController
 from src.core.common.database.context import database_context
@@ -31,7 +32,7 @@ class App(Flask):
         self.before_request(self.execute_before_request)
         self.teardown_request(self.execute_teardown_request)
 
-    def init_config(self):
+    def init_config(self) -> APIConfig:
         env = os.environ.get("ENV", "PROD")
         self.config.from_object(APIConfigService(env, file="config.yml").get_config())
         self.logger.info("config", **self.config)

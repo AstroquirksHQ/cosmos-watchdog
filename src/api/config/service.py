@@ -7,6 +7,6 @@ class APIConfigService(ConfigService):
 
     def get_config(self) -> APIConfig:
         return APIConfig(
-            HOST=self.lookup_config("API_HOST"),
-            PORT=self.lookup_config("API_PORT"),
+            HOST=self.lookup_config("HOST"),
+            PORT=self.lookup_config("PORT"),
         )

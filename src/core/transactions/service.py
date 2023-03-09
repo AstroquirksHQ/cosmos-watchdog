@@ -16,15 +16,19 @@ class TransactionService:
 
     def save_many(self, transactions_datas: List[Dict]) -> List[int]:
         new_entries = []
+        already_exist = 0
         for tx_data in transactions_datas:
             try:
                 tx = Transaction(**tx_data)
                 tx.save()
                 new_entries.append(tx.id)
             except IntegrityError:
-                self.logger.debug("The transaction already exist")
+                already_exist += 1
                 pass
-        self.logger.info(f"Saved {len(new_entries)} new transactions!")
+        if already_exist:
+            self.logger.debug(f"Didn't save {already_exist} transactions which already exist")
+        if new_entries:
+            self.logger.info(f"Saved {len(new_entries)} new transactions!")
         return new_entries
 
     def delete_transactions(self, tx_type: TransactionType, from_offset: int) -> int:

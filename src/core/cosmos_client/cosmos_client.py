@@ -25,7 +25,7 @@ class CosmosClient:
         resp = requests.get(url, params=params)
         resp.raise_for_status()
         if not resp.content:
-            raise EmptyResponseException
+            raise EmptyResponseException(resp.url)
         return resp.json()
 
     def get_delegations(self, validator_address: str) -> dict:
@@ -120,7 +120,8 @@ class CosmosClient:
         return resp
 
     def get_delegate_txs(self, address: str, offset: int = 0) -> Dict:
-        self.logger.info(f"Fetching delegate txs for {address} - offset {offset}")
+        action = f"Fetching DELEGATE txs for {address} - offset {offset}"
+        self.logger.info(action)
         params = {
             "events": [
                 "message.action='/cosmos.staking.v1beta1.MsgDelegate'",
@@ -131,12 +132,13 @@ class CosmosClient:
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f"Error while {action}", error=e)
             return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_redelegate_txs(self, address: str, offset: int = 0):
-        self.logger.info(f"Fetching redelegate tx to {address} - offset {offset}")
+        action = f"Fetching REDELEGATE tx to {address} - offset {offset}"
+        self.logger.info(action)
         params = {
             "events": [
                 "message.action='/cosmos.staking.v1beta1.MsgBeginRedelegate'",
@@ -147,12 +149,13 @@ class CosmosClient:
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f"Error while {action}", error=e)
             return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_unredelegate_txs(self, address: str, offset: int = 0):
-        self.logger.info(f"Fetching unredelegate tx from {address} - offset {offset}")
+        action = f"Fetching UNREDELEGATE tx from {address} - offset {offset}"
+        self.logger.info(action)
         params = {
             "events": [
                 "message.action='/cosmos.staking.v1beta1.MsgBeginRedelegate'",
@@ -163,12 +166,13 @@ class CosmosClient:
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f"Error while {action}", error=e)
             return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_undelegate_txs(self, address: str, offset: int = 0):
-        self.logger.info(f"Fetching undelegate tx from {address} - offset {offset}")
+        action = f"Fetching UNDELEGATE tx from {address} - offset {offset}"
+        self.logger.info(action)
         params = {
             "events": [
                 "message.action='/cosmos.staking.v1beta1.MsgUndelegate'",
@@ -179,12 +183,13 @@ class CosmosClient:
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f"Error while {action}", error=e)
             return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
 
     def get_restake_txs(self, address: str, offset: int = 0):
-        self.logger.info(f"Fectching restake tx for {address} - offset {offset}")
+        action = f"Fetching RESTAKE tx for {address} - offset {offset}"
+        self.logger.info(action)
         params = {
             "events": [
                 "message.action='/cosmos.authz.v1beta1.MsgExec'",
@@ -195,6 +200,6 @@ class CosmosClient:
         try:
             resp = self.get("/cosmos/tx/v1beta1/txs", params=params)
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f"Error while {action}", error=e)
             return {"tx_responses": [], "pagination": {"total": 0}}
         return resp
