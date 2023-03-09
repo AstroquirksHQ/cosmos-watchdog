@@ -89,7 +89,7 @@ Options:
 ## Start the synchronizer 
 
 ```bash
-pipenv run synchronizer
+pipenv run start-synchronizer
 ```
 
 NOTE: this needs to be a docker image to run
@@ -108,7 +108,7 @@ You can configure Cosmos Watchdog using environment variables. Here are the avai
 ```
 SYNCHRONIZER_VALIDATOR_ADDRESS: The validator address to synchronize transactions from.
 SYNCHRONIZER_FREQUENCY: The synchronization frequency in seconds.
-DB_SCHEMA, DB_USER, DB_HOST, DB_PORT, and DB_PASSWORD: The database connection parameters.
+DB_SCHEMA,DB_USER, DB_HOST, DB_PORT, and DB_PASSWORD: The database connection parameters.
 BOT_FREQUENCY: The notification frequency in seconds.
 BOT_TOKEN: The auth token of your bot
 BOT_CHANNEL_ID: The ID of the Discord channel
