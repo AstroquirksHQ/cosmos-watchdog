@@ -11,6 +11,7 @@ from src.core.notifications.service import NotificationService
 from src.core.transactions.model import TransactionType
 from src.core.transactions.service import TransactionService
 from src.synchronizer.service import SynchronizationService
+from src.synchronizer.scheduler import BackgroundTxSynchronizer
 
 
 @click.group()
@@ -78,6 +79,12 @@ def bot():
 )
 def notify(tx_ids: list[int]):
     NotificationService().new_notifications_for_tx_ids(tx_ids)
+
+
+@cli.command(name="start_synchronizer")
+def start_synchronizer():
+    synchronizer = BackgroundTxSynchronizer()
+    synchronizer.start()
 
 
 if __name__ == "__main__":

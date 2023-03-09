@@ -7,7 +7,7 @@ class BotConfigService(ConfigService):
 
     def get_config(self) -> BotConfig:
         return BotConfig(
-            TOKEN=self.lookup_config("BOT_TOKEN"),
-            FREQUENCY=self.lookup_config("BOT_FREQUENCY"),
-            CHANNEL_ID=self.lookup_config("BOT_CHANNEL_ID"),
+            TOKEN=self.lookup_config("TOKEN"),
+            FREQUENCY=self.lookup_config("FREQUENCY"),
+            CHANNEL_ID=self.lookup_config("CHANNEL_ID"),
         )

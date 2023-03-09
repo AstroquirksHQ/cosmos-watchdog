@@ -7,9 +7,9 @@ class DatabaseConfigService(ConfigService):
 
     def get_config(self) -> DatabaseConfig:
         return DatabaseConfig(
-            SCHEMA=self.lookup_config("DB_SCHEMA"),
-            USER=self.lookup_config("DB_USER"),
-            HOST=self.lookup_config("DB_HOST"),
-            PORT=self.lookup_config("DB_PORT"),
-            PASSWORD=self.lookup_config("DB_PASSWORD"),
+            SCHEMA=self.lookup_config("SCHEMA"),
+            USER=self.lookup_config("USER"),
+            HOST=self.lookup_config("HOST"),
+            PORT=self.lookup_config("PORT"),
+            PASSWORD=self.lookup_config("PASSWORD"),
         )

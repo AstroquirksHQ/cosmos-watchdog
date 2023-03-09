@@ -5,6 +5,7 @@ from discord import Client, Intents
 from discord.ext import tasks
 import structlog
 
+from src.bot.config.model import BotConfig
 from src.bot.config.service import BotConfigService
 from src.bot.message_crafter import MessageCrafter
 from src.core.common.database.context import database_context
@@ -21,7 +22,7 @@ class DiscordBot(Client):
         self.notification_service = NotificationService()
         self.config = self.init_config()
 
-    def init_config(self):
+    def init_config(self) -> BotConfig:
         env = os.environ.get("ENV", "PROD")
         config = BotConfigService(env, file="config.yml").get_config()
         self.logger.info("config", **config.to_dict())

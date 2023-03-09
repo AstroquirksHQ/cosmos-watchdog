@@ -1,10 +1,6 @@
 import datetime
 
 
-def utc_now():
+def utc_now() -> datetime:
     return datetime.datetime.utcnow()
 
-
-def remove_prefix(prefix: str, value: str):
-    len_prefix = len(prefix)
-    return value[len_prefix:]
