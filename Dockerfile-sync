@@ -6,4 +6,4 @@ WORKDIR /app
 RUN  pip install pipenv  \
     && pipenv install
 
-CMD ["pipenv", "run", "sync"]
+CMD ["pipenv", "run", "start-synchronizer"]
