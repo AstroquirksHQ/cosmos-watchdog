@@ -15,6 +15,7 @@ PROD:
   SYNCHRONIZER:
     FREQUENCY: 30 #seconds
     VALIDATOR_ADDRESS: osmovaloper1udp8gef365zcqhlxuepewrxuep9thjanuhxcaw
+    NOTIFY: True
 TEST:
   DB:
     SCHEMA: test_cosmos_watchdog
@@ -32,3 +33,4 @@ TEST:
   SYNCHRONIZER:
     FREQUENCY: 30 #seconds
     VALIDATOR_ADDRESS: osmovaloper1udp8gef365zcqhlxuepewrxuep9thjanuhxcaw
+    NOTIFY: True
