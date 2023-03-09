@@ -1,5 +1,9 @@
-# Cosmos Watchdog
-![](resources/watchdog.png)
+
+<img src="resources/watchdog.png" width="200">
+
+<h1 style="display:inline; position: absolute; margin-left: 10px; margin-top: 60px" >Cosmos Watchdog</h1>
+
+
 Cosmos Watchdog is a tool that allows you to synchronize all transactions of different types for a given validator and receive notifications on a Discord Channel when new transactions are seen.
 
 For now only the osmosis blockchain is supported
@@ -8,25 +12,31 @@ For now only the osmosis blockchain is supported
 
 ### DELEGATE
 
-![Delegate Example](resources/examples/delegate.png)
+<img src="resources/examples/delegate.png" width="300">
 
 ### UNDELEGATE
 
-![Delegate Example](resources/examples/undelegate.png)
+<img src="resources/examples/undelegate.png" width="300">
+
 
 ### REDELEGATE
 
-![Delegate Example](resources/examples/redelegate.png)
+<img src="resources/examples/redelegate.png" width="300">
 
 
 ### UNREDELEGATE
 
-![Delegate Example](resources/examples/unredelegate.png)
+<img src="resources/examples/unredelegate.png" width="300">
 
 
-### RESTAKE 
+### RESTAKE
 
-![Delegate Example](resources/examples/restake.png)
+<img src="resources/examples/restake.png" width="300">
+
+
+## Architecture
+
+<img src="resources/architecture.png" width="700">
 
 
 ## Installation
@@ -86,39 +96,67 @@ Options:
   --help               Show this message and exit.
 ```
 
-## Start the synchronizer 
-
-```bash
-pipenv run start-synchronizer
-```
-
-NOTE: this needs to be a docker image to run
-
-## Start the discord bot
-
-```bash
-DISCORD_TOKEN=XXX pipenv run bot
-```
-
-NOTE: this needs to be a docker image to run
-
 ## Configuration
 
 You can configure Cosmos Watchdog using environment variables. Here are the available variables:
 ```
 SYNCHRONIZER_VALIDATOR_ADDRESS: The validator address to synchronize transactions from.
 SYNCHRONIZER_FREQUENCY: The synchronization frequency in seconds.
+SYNCHRONIZER_NOTIFY: The synchronization frequency in seconds.
 DB_SCHEMA,DB_USER, DB_HOST, DB_PORT, and DB_PASSWORD: The database connection parameters.
 BOT_FREQUENCY: The notification frequency in seconds.
 BOT_TOKEN: The auth token of your bot
 BOT_CHANNEL_ID: The ID of the Discord channel
 ```
 
+
+## Start the synchronizer 
+
+### Using local code
+```bash
+# config is taken from config.yaml file
+pipenv run start-synchronizer
+```
+
+### docker image
+```bash
+docker run -e SYNCHRONIZER_VALIDATOR_ADDRESS=<SYNCHRONIZER_VALIDATOR_ADDRESS> -e SYNCHRONIZER_FREQUENCY=<SYNCHRONIZER_FREQUENCY> -e SYNCHRONIZER_NOTIFY=<SYNCHRONIZER_NOTIFY> ghcr.io/astroquirkshq/cosmos-watchdog:<IMAGETAG>-sync
+```
+
+## Start the discord bot
+
+### Using local code
+```shell
+# config is taken from config.yaml file
+pipenv run bot
+```
+
+### docker image
+```shell
+docker run -e BOT_TOKEN=<BOT_TOKEN> -e BOT_CHANNEL_ID=<CHANNEL_ID> -e BOT_FREQUENCY=<BOT_FREQUENCY> ghcr.io/astroquirkshq/cosmos-watchdog:<IMAGETAG>-bot
+```
+
+
+## Start the flask server
+
+### Using local code
+```shell
+# config is taken from config.yaml file
+pipenv run server 
+```
+
+### docker image
+```shell
+docker run -e API_HOST=<API_HOST> -e API_PORT=<API_PORT> ghcr.io/astroquirkshq/cosmos-watchdog:<IMAGETAG>-api
+```
+
+
+
 ## Testing
 
 To run the tests, use the following command:
 
-```bash
+```shell
 pipenv run tests
 ```
 
@@ -126,16 +164,37 @@ pipenv run tests
 
 To run the linter, use the following command:
 
-```bash
+```shell
 pipenv run lint
 ```
 
 
-TODO : 
+# TODO :
 
-- Add docker images
-- Improve separation between synchronizer, flask http interface, discord bot
-- use colors https://gist.github.com/kkrypt0nn/a02506f3712ff2d1c8ca7c9e0aed7c06#file-ansi-colors-showcase-md
+## COSMOS-WATCHDOG
+- test with stargaze
+- add docker-compose
+
+## CORE
+- add db migration support
+- add missing unit tests
+
+
+## SYNCHRONIZER
+- add NOTIFY_ON_INITIAL_SYNC env variable option
+- find a smart way to handle restake for all kind of tx type
+- find a way to group restake notifications
+- add integration tests synchronizer
+- add missing unit tests
+- add multi-currency support
+
+## CLI
+- support wipe-notification
+
+## BOT
+- support validator name
+- add integration tests discord bot
+- add missing unit tests
 - Expose discord command to :
    - get balance
    - get list of delegators
@@ -143,3 +202,8 @@ TODO :
      - balance
      - nb delegators
    - get my history
+
+## API
+- Expose delegation history through api endpoint by delegator
+- Expose delegation history through api endpoint by validator 
+
