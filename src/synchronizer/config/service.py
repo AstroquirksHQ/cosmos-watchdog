@@ -9,4 +9,5 @@ class SynchronizerConfigService(ConfigService):
         return SynchronizerConfig(
             FREQUENCY=self.lookup_config("FREQUENCY"),
             VALIDATOR_ADDRESS=self.lookup_config("VALIDATOR_ADDRESS"),
+            NOTIFY=self.lookup_config("NOTIFY")
         )

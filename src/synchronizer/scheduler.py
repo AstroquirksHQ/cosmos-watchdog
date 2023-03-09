@@ -29,7 +29,7 @@ class BackgroundTxSynchronizer:
             self.logger.info(
                 f"[{tx_type.value}] Running synchronization ...", tx_type=tx_type.value
             )
-            self.service.synchronize_by_type(tx_type, notify=False)
+            self.service.synchronize_by_type(tx_type, notify=self.config.NOTIFY)
             self.logger.info(
                 f"[{tx_type.value}] sleeping {self.config.FREQUENCY} seconds ...",
                 tx_type=tx_type.value,
