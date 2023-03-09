@@ -43,7 +43,7 @@ class DiscordBot(Client):
         self.logger.info("------")
 
     async def _get_channel(self, channel_id: int):
-        channel = self.get_channel(channel_id)
+        channel = self.get_channel(channel_id) or await self.fetch_channel(channel_id)
         if channel is None:
             self.logger.error(f"Channel with ID ({channel_id}) not found.")
         return channel
