@@ -21,8 +21,7 @@ class ConfigService:
 
     def lookup_config(self, config_name: str):
         return os.environ.get(
-            self.prefixed(config_name),
-            self.default_config.get(config_name)
+            self.prefixed(config_name), self.default_config.get(config_name)
         )
 
     def get_config(self):
