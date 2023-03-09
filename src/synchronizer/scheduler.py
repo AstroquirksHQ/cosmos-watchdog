@@ -26,13 +26,19 @@ class BackgroundTxSynchronizer:
 
     async def _background_run(self, tx_type: TransactionType):
         while True:
-            self.logger.info(f"[{tx_type.value}] Running synchronization ...", tx_type=tx_type.value)
-            self.service.synchronize_by_type(tx_type, notify=True)
-            self.logger.info(f"[{tx_type.value}] sleeping {self.config.FREQUENCY} seconds ...", tx_type=tx_type.value)
+            self.logger.info(
+                f"[{tx_type.value}] Running synchronization ...", tx_type=tx_type.value
+            )
+            self.service.synchronize_by_type(tx_type, notify=False)
+            self.logger.info(
+                f"[{tx_type.value}] sleeping {self.config.FREQUENCY} seconds ...",
+                tx_type=tx_type.value,
+            )
             await asyncio.sleep(self.config.FREQUENCY)
 
     def start(self):
         tasks = [
-            self.loop.create_task(self._background_run(tx_type)) for tx_type in TransactionType
+            self.loop.create_task(self._background_run(tx_type))
+            for tx_type in TransactionType
         ]
         self.loop.run_until_complete(asyncio.gather(*tasks))

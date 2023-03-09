@@ -19,10 +19,9 @@ class TxSynchronizer(ABC):
     def fetch_transactions(self):
         pass
 
-    @classmethod
     @abstractmethod
     def parse_transaction(
-        cls, message: Dict, message_props: Dict, validator_address: str
+        self, message: Dict, message_props: Dict, validator_address: str
     ) -> List[Dict]:
         pass
 

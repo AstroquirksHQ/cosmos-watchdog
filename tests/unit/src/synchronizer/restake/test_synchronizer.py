@@ -49,4 +49,4 @@ def test_parse_transaction():
     assert transactions[0]["validator"] == message["msgs"][0]["validator_address"]
     assert transactions[0]["delegator"] == message["msgs"][0]["delegator_address"]
     assert transactions[0]["amount"] == int(message["msgs"][0]["amount"]["amount"])
-    assert transactions[0]["type"] == TransactionType.DELEGATE.value
+    assert transactions[0]["type"] == TransactionType.RESTAKE.value

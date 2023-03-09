@@ -26,7 +26,9 @@ class TransactionService:
                 already_exist += 1
                 pass
         if already_exist:
-            self.logger.debug(f"Didn't save {already_exist} transactions which already exist")
+            self.logger.debug(
+                f"Didn't save {already_exist} transactions which already exist"
+            )
         if new_entries:
             self.logger.info(f"Saved {len(new_entries)} new transactions!")
         return new_entries
