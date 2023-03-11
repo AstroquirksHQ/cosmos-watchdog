@@ -21,7 +21,7 @@ async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_
     notification = Notification.create(
         transaction=transaction1, status=NotificationStatus.PENDING.value
     )
-
+    print(f"my transaction timestamp == {transaction1.timestamp}")
     expected_embed = MessageCrafter(notification).to_card().to_dict()
     expected_thumbnail = expected_embed.pop("thumbnail")
     expected_timestamp = expected_embed.pop("timestamp")
@@ -39,6 +39,11 @@ async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_
             embed = message.embeds[0].to_dict()
             thumbnail = embed.pop("thumbnail")
             timestamp = embed.pop("timestamp")
+            print(f"found timestamp of embed == {timestamp}")
+            print(f"comparing it to expected timestamp == {expected_timestamp}")
+            print(f"Rounded timestamp == {timestamp_to_round_datetime(timestamp)}")
+            print(f"Rounded expected_timestamp == {timestamp_to_round_datetime(expected_timestamp)}")
+
             assert message.author == client.user
             assert timestamp_to_round_datetime(
                 timestamp
