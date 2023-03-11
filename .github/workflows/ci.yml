@@ -203,11 +203,13 @@ jobs:
           echo "running BOT integration tests"
           failed=0
           eval $test_command || failed=1
+          docker ps
           docker logs cosmos-watchdog-bot >& cosmos-watchdog-bot-logs.txt
           if [ $failed -eq 1 ];then
           echo "failed, exiting...."
           exit 1
           fi
+          echo "HELLO"
         env:
           # The hostname used to communicate with the PostgreSQL service container
           DB_HOST: localhost
