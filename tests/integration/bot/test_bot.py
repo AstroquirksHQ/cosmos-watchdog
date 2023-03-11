@@ -45,8 +45,27 @@ async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_
             print(f"Rounded expected_timestamp == {timestamp_to_round_datetime(expected_timestamp)}")
 
             assert message.author == client.user
+            # assert timestamp_to_round_datetime(
+            #     timestamp
+            # ) == timestamp_to_round_datetime(expected_timestamp)
+            assert thumbnail["url"] == expected_thumbnail["url"]
+            assert expected_embed == embed
+
+        messages = channel.history(limit=1)
+        async for message in messages:
+            assert len(message.embeds) == 1
+            embed = message.embeds[0].to_dict()
+            thumbnail = embed.pop("thumbnail")
+            timestamp = embed.pop("timestamp")
+            print(f"found timestamp of embed == {timestamp}")
+            print(f"comparing it to expected timestamp == {expected_timestamp}")
+            print(f"Rounded timestamp == {timestamp_to_round_datetime(timestamp)}")
+            print(f"Rounded expected_timestamp == {timestamp_to_round_datetime(expected_timestamp)}")
+
+            assert message.author == client.user
             assert timestamp_to_round_datetime(
                 timestamp
             ) == timestamp_to_round_datetime(expected_timestamp)
             assert thumbnail["url"] == expected_thumbnail["url"]
             assert expected_embed == embed
+    0/0
