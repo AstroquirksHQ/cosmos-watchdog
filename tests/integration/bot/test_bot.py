@@ -3,7 +3,6 @@ from datetime import datetime
 
 import pytest
 
-from src.bot.config.service import BotConfigService
 from src.bot.message_crafter import MessageCrafter
 from src.core.notifications.model import Notification, NotificationStatus
 from src.core.transactions.model import Transaction, TransactionType
@@ -29,7 +28,7 @@ async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_
 
     # Wait for the bot to send the notification
     # Adjust the sleep time to give the bot enough time to send the notification
-    await asyncio.sleep(discord_bot_config.FREQUENCY+1)
+    await asyncio.sleep(discord_bot_config.FREQUENCY + 1)
     # Fetch the channel by its ID
     async for client in discord_bot:
         channel = await client.fetch_channel(discord_bot_config.CHANNEL_ID)
@@ -41,7 +40,8 @@ async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_
             thumbnail = embed.pop("thumbnail")
             timestamp = embed.pop("timestamp")
             assert message.author == client.user
-            assert timestamp_to_round_datetime(timestamp) == timestamp_to_round_datetime(expected_timestamp)
-            assert thumbnail['url'] == expected_thumbnail['url']
+            assert timestamp_to_round_datetime(
+                timestamp
+            ) == timestamp_to_round_datetime(expected_timestamp)
+            assert thumbnail["url"] == expected_thumbnail["url"]
             assert expected_embed == embed
-
