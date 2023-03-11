@@ -153,7 +153,7 @@ jobs:
           push: true
 
   bot-integration-tests:
-    needs: [ docker-build-and-publish-bot, linting-and-unit-tests ]
+    needs: [ docker-build-and-publish-bot ]
 
     runs-on: ubuntu-latest
     services:
@@ -204,7 +204,7 @@ jobs:
         run: pipenv run it-tests bot
 
   api-integration-tests:
-    needs: [docker-build-and-publish-api, linting-and-unit-tests]
+    needs: [docker-build-and-publish-api]
 
     runs-on: ubuntu-latest
     services:
