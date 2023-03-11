@@ -36,8 +36,7 @@ class MessageCrafter:
         return f"[{address}](https://www.mintscan.io/osmosis/account/{address})"
 
     def timestamp(self, timestamp: datetime) -> datetime:
-        formatted = str(int(timestamp.timestamp()))
-        return datetime.fromtimestamp(int(formatted))
+        return timestamp
 
     def to_delegation_card(self):
         tx = self.notification.transaction
