@@ -198,7 +198,16 @@ jobs:
           python -m pip install pipenv 
           pipenv install --dev
       - name: Run IT tests
-        run: pipenv run it-tests bot
+        run: |
+          test_command="pipenv run it-tests bot"
+          echo "running BOT integration tests"
+          failed=0
+          eval $test_command || failed=1
+          docker logs cosmos-watchdog-bot >& cosmos-watchdog-bot-logs.txt
+          if [ $failed -eq 1 ];then
+          echo "failed, exiting...."
+          exit 1
+          fi
         env:
           # The hostname used to communicate with the PostgreSQL service container
           DB_HOST: localhost
@@ -209,6 +218,12 @@ jobs:
           DB_SCHEMA: testdb
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           BOT_CHANNEL_ID: ${{ secrets.TEST_CHANNEL_ID }}
+      - if: ${{ always() }}
+        name: upload cosmos-watchdog bot logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: cosmos-watchdog-bot-logs.txt
+          path: cosmos-watchdog-bot-logs.txt
 
   api-integration-tests:
     needs: [docker-build-and-publish-api]
@@ -258,7 +273,16 @@ jobs:
           python -m pip install pipenv 
           pipenv install --dev
       - name: Run IT tests
-        run: pipenv run it-tests api
+        run: |
+          test_command="pipenv run it-tests api"
+          echo "running API integration tests"
+          failed=0
+          eval $test_command || failed=1
+          docker logs cosmos-watchdog-api >& cosmos-watchdog-api-logs.txt
+          if [ $failed -eq 1 ];then
+          echo "failed, exiting...."
+          exit 1
+          fi
         env:
           # The hostname used to communicate with the PostgreSQL service container
           DB_HOST: localhost
@@ -267,3 +291,9 @@ jobs:
           DB_USER: postgres
           DB_PASSWORD: postgres
           DB_SCHEMA: testdb
+      - if: ${{ always() }}
+        name: upload cosmos-watchdog api logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: cosmos-watchdog-api-logs.txt
+          path: cosmos-watchdog-api-logs.txt
