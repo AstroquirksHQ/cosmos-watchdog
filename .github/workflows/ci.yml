@@ -152,6 +152,57 @@ jobs:
           build-args: COMMIT_HASH=${{ github.sha }}
           push: true
 
+  bot-integration-tests:
+    needs: [ docker-build-and-publish-bot, linting-and-unit-tests ]
+
+    runs-on: ubuntu-latest
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: testdb
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+      cosmos-watchdog:
+        image: ${{ needs.docker-build-and-publish-bot.outputs.image_tag }}
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          DB_HOST: postgres
+          # The default PostgreSQL port
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SCHEMA: testdb
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          BOT_CHANNEL_ID: ${{ secrets.TEST_CHANNEL_ID }}
+        ports:
+          # Maps tcp port 5000 on service container to the host
+          - 5000:5000
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install pipenv 
+          pipenv install --dev
+      - name: Run IT tests
+        run: pipenv run it-tests bot
+
   api-integration-tests:
     needs: [docker-build-and-publish-api, linting-and-unit-tests]
 
@@ -200,4 +251,4 @@ jobs:
           python -m pip install pipenv 
           pipenv install --dev
       - name: Run IT tests
-        run: pipenv run it-tests
+        run: pipenv run it-tests api
