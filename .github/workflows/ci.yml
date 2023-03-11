@@ -175,7 +175,7 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
-      cosmos-watchdog:
+      cosmos-watchdog-bot:
         image: ${{ needs.docker-build-and-publish-bot.outputs.image_tag }}
         env:
           # The hostname used to communicate with the PostgreSQL service container
@@ -187,9 +187,6 @@ jobs:
           DB_SCHEMA: testdb
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           BOT_CHANNEL_ID: ${{ secrets.TEST_CHANNEL_ID }}
-        ports:
-          # Maps tcp port 5000 on service container to the host
-          - 5000:5000
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.11
@@ -202,6 +199,16 @@ jobs:
           pipenv install --dev
       - name: Run IT tests
         run: pipenv run it-tests bot
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          DB_HOST: postgres
+          # The default PostgreSQL port
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SCHEMA: testdb
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          BOT_CHANNEL_ID: ${{ secrets.TEST_CHANNEL_ID }}
 
   api-integration-tests:
     needs: [docker-build-and-publish-api]
@@ -226,7 +233,7 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
-      cosmos-watchdog:
+      cosmos-watchdog-api:
         image: ${{ needs.docker-build-and-publish-api.outputs.image_tag }}
         env:
           # The hostname used to communicate with the PostgreSQL service container
