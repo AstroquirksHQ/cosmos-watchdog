@@ -65,10 +65,4 @@ async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_
             assert found == 1
 
         messages = channel.history(limit=10)
-        async for message in messages:
-            found = 0
-            if message_has_notification_embed(message, notification, client.user):
-                found = 1
-            assert found == 1
-
-    0/0
+        assert any([message_has_notification_embed(message, notification, discord_bot.user) async for message in messages])

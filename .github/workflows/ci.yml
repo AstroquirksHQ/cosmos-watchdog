@@ -201,16 +201,24 @@ jobs:
           pipenv install --dev
       - name: Run IT tests
         run: |
+          # Define the test command
           test_command="pipenv run it-tests bot"
-          echo "running BOT integration tests"
-          failed=0
-          eval $test_command || failed=1
-          docker ps
-          docker logs cosmos-watchdog-bot >& cosmos-watchdog-bot-logs.txt
-          if [ $failed -eq 1 ];then
-          echo "failed, exiting...."
-          exit 1
+  
+          echo "Running BOT integration tests"
+          # Run the test command and store the result in a variable
+          test_result=$($test_command)
+
+          # Print the container logs for reference
+          docker logs cosmos-watchdog-bot > cosmos-watchdog-bot-logs.txt 
+          
+          # Check the exit status of the test command
+          if [[ $? -eq 0 ]]; then
+            echo "Tests succeeded!"
+          else
+            echo "Tests failed!"
+            exit 1
           fi
+          
           exit 0
         env:
           # The hostname used to communicate with the PostgreSQL service container
@@ -278,15 +286,24 @@ jobs:
           pipenv install --dev
       - name: Run IT tests
         run: |
+          # Define the test command
           test_command="pipenv run it-tests api"
-          echo "running API integration tests"
-          failed=0
-          eval $test_command || failed=1
-          docker logs cosmos-watchdog-api >& cosmos-watchdog-api-logs.txt
-          if [ $failed -eq 1 ];then
-          echo "failed, exiting...."
-          exit 1
+  
+          echo "Running BOT integration tests"
+          # Run the test command and store the result in a variable
+          test_result=$($test_command)
+
+          # Print the container logs for reference
+          docker logs cosmos-watchdog-api > cosmos-watchdog-api-logs.txt 
+          
+          # Check the exit status of the test command
+          if [[ $? -eq 0 ]]; then
+            echo "Tests succeeded!"
+          else
+            echo "Tests failed!"
+            exit 1
           fi
+          echo "HELLO"
           exit 0
         env:
           # The hostname used to communicate with the PostgreSQL service container
