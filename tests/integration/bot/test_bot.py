@@ -40,7 +40,6 @@ def message_has_notification_embed(message_with_embed: Message, notification: No
         return False
 
 
-
 @pytest.mark.parametrize("tx_type", [tx_type for tx_type in TransactionType])
 @pytest.mark.asyncio
 async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_config):
@@ -56,13 +55,6 @@ async def test_notification_sent(populate_db, discord_bot, tx_type, discord_bot_
     # Fetch the channel by its ID
     async for client in discord_bot:
         channel = await client.fetch_channel(discord_bot_config.CHANNEL_ID)
-
-        messages = channel.history(limit=10)
-        async for message in messages:
-            found = 0
-            if message_has_notification_embed(message, notification, client.user):
-                found = 1
-            assert found == 1
 
         messages = channel.history(limit=10)
         assert any([message_has_notification_embed(message, notification, discord_bot.user) async for message in messages])
