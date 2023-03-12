@@ -3,8 +3,10 @@ import secrets
 from datetime import datetime
 from random import randint
 
+import discord
 import pytest
 
+from src.bot.config.service import BotConfigService
 from src.core.common.database.base_model import database_proxy
 from src.core.common.database.config.service import DatabaseConfigService
 from src.core.common.database.service import DatabaseService
@@ -51,3 +53,20 @@ def populate_db():
                 timestamp=datetime.now(),
                 offset=i,
             )
+
+
+@pytest.fixture(scope="function")
+def discord_bot_config():
+    return BotConfigService("TEST").get_config()
+
+
+@pytest.fixture(scope="function")
+async def discord_bot(discord_bot_config):
+    intents = discord.Intents.default()
+    intents.messages = True
+    client = discord.Client(intents=intents)
+    await client.login(discord_bot_config.TOKEN)
+
+    yield client
+
+    await client.close()

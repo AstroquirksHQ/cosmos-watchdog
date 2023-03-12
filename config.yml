@@ -28,7 +28,7 @@ TEST:
     PORT: 5000
   BOT:
     TOKEN: XXX
-    FREQUENCY: 10 #seconds
+    FREQUENCY: 1 #seconds
     CHANNEL_ID: 1234
   SYNCHRONIZER:
     FREQUENCY: 30 #seconds

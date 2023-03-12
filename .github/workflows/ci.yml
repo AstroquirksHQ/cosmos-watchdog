@@ -152,8 +152,8 @@ jobs:
           build-args: COMMIT_HASH=${{ github.sha }}
           push: true
 
-  api-integration-tests:
-    needs: [docker-build-and-publish-api, linting-and-unit-tests]
+  bot-integration-tests:
+    needs: [ docker-build-and-publish-bot ]
 
     runs-on: ubuntu-latest
     services:
@@ -175,8 +175,95 @@ jobs:
         ports:
           # Maps tcp port 5432 on service container to the host
           - 5432:5432
-      cosmos-watchdog:
+      cosmos-watchdog-bot:
+        image: ${{ needs.docker-build-and-publish-bot.outputs.image_tag }}
+        options: >-
+          --name cosmos-watchdog-bot
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          DB_HOST: postgres
+          # The default PostgreSQL port
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SCHEMA: testdb
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          BOT_CHANNEL_ID: ${{ secrets.TEST_CHANNEL_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install pipenv 
+          pipenv install --dev
+      - name: Run IT tests
+        run: |
+          # Define the test command
+          test_command="pipenv run it-tests bot"
+  
+          echo "Running BOT integration tests"
+          # Run the test command and store the result in a variable
+          test_result=$($test_command)
+
+          # Print the container logs for reference
+          docker logs cosmos-watchdog-bot > cosmos-watchdog-bot-logs.txt 
+          
+          # Check the exit status of the test command
+          if [[ $? -eq 0 ]]; then
+            echo "Tests succeeded!"
+          else
+            echo "Tests failed!"
+            exit 1
+          fi
+          
+          exit 0
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          DB_HOST: localhost
+          # The default PostgreSQL port
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SCHEMA: testdb
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          BOT_CHANNEL_ID: ${{ secrets.TEST_CHANNEL_ID }}
+      - if: ${{ always() }}
+        name: upload cosmos-watchdog bot logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: cosmos-watchdog-bot-logs.txt
+          path: cosmos-watchdog-bot-logs.txt
+
+  api-integration-tests:
+    needs: [docker-build-and-publish-api]
+
+    runs-on: ubuntu-latest
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: testdb
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+      cosmos-watchdog-api:
         image: ${{ needs.docker-build-and-publish-api.outputs.image_tag }}
+        options: >-
+          --name cosmos-watchdog-api
         env:
           # The hostname used to communicate with the PostgreSQL service container
           DB_HOST: postgres
@@ -200,4 +287,37 @@ jobs:
           python -m pip install pipenv 
           pipenv install --dev
       - name: Run IT tests
-        run: pipenv run it-tests
+        run: |
+          # Define the test command
+          test_command="pipenv run it-tests api"
+  
+          echo "Running BOT integration tests"
+          # Run the test command and store the result in a variable
+          test_result=$($test_command)
+
+          # Print the container logs for reference
+          docker logs cosmos-watchdog-api > cosmos-watchdog-api-logs.txt 
+          
+          # Check the exit status of the test command
+          if [[ $? -eq 0 ]]; then
+            echo "Tests succeeded!"
+          else
+            echo "Tests failed!"
+            exit 1
+          fi
+          echo "HELLO"
+          exit 0
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          DB_HOST: localhost
+          # The default PostgreSQL port
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SCHEMA: testdb
+      - if: ${{ always() }}
+        name: upload cosmos-watchdog api logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: cosmos-watchdog-api-logs.txt
+          path: cosmos-watchdog-api-logs.txt

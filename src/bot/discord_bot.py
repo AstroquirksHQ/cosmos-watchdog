@@ -57,7 +57,9 @@ class DiscordBot(Client):
                     await channel.send(embed=card)
                     self.notification_service.mark_as_sent(notification)
                 else:
-                    self.logger.error(f"Card for notification (tx_id = {notification.transaction}) is empty")
+                    self.logger.error(
+                        f"Card for notification (tx_id = {notification.transaction}) is empty"
+                    )
         self.logger.info(f"Waiting {self.config.FREQUENCY} seconds ...")
         await asyncio.sleep(self.config.FREQUENCY)
 
