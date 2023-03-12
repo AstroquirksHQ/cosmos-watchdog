@@ -262,6 +262,8 @@ jobs:
           - 5432:5432
       cosmos-watchdog-api:
         image: ${{ needs.docker-build-and-publish-api.outputs.image_tag }}
+        options: >-
+          --name cosmos-watchdog-api
         env:
           # The hostname used to communicate with the PostgreSQL service container
           DB_HOST: postgres
